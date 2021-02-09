@@ -5,10 +5,10 @@
 
 // Definition of pins ---------------------------------
 // Relay in order from vcc - 43, 45, 41, A12 
-#define GrabP1 A12  
-#define GrabP2 41
-#define ThrowP1 45
-#define ThrowP2 43
+#define ThrowP1 A12  
+#define ThrowP2 41
+#define GrabP1 45
+#define GrabP2 43
 
 #define limitClkPin A6
 #define limitAclkPin A0

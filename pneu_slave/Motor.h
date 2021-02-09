@@ -12,13 +12,13 @@ class Motor {
       pinMode(pwm_pin, OUTPUT);
     }
     void clk(uint8_t pwm) {
-      digitalWrite(input_1, HIGH);
-      digitalWrite(input_2, LOW);
+      digitalWrite(input_1, LOW);
+      digitalWrite(input_2, HIGH);
       analogWrite(pwm_pin, pwm);
     }
     void aclk(uint8_t pwm) {
-      digitalWrite(input_1, LOW);
-      digitalWrite(input_2, HIGH);
+      digitalWrite(input_1, HIGH);
+      digitalWrite(input_2, LOW);
       analogWrite(pwm_pin, pwm);
     }
     void brake() {
