@@ -19,17 +19,17 @@
 #define Grab_in1 5
 #define Grab_in2 22
 
-#define FRD 13 
-#define FRP 6
+#define m3d 13 
+#define m3p 6
 
-#define BRD 7
-#define BRP 12
+#define m2d 7
+#define m2p 12
 
-#define BLD 9
-#define BLP 10
+#define m4d 9
+#define m4p 10
 
-#define FLD 11
-#define FLP 8
+#define m1d 11
+#define m1p 8
 
 // Definition of digitalReads -------------------------
 #define limitClk digitalRead(limitClkPin)
@@ -45,10 +45,10 @@ Pneumatic Grabber(GrabP1, GrabP2);
 
 
 // Base motors and Bot object
-Motor motor3(FRP, FRD);
-Motor motor2(BRP, BRD);
-Motor motor4(BLP, BLD);
-Motor motor1(FLP, FLD);
+Motor motor1(m1p, m1d);
+Motor motor2(m2p, m2d);
+Motor motor3(m3p, m3d);
+Motor motor4(m4p, m4d);
 
 Bot bot(motor1, motor2, motor3, motor4);
 
