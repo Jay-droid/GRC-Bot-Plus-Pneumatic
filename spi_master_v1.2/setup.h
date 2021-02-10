@@ -17,10 +17,18 @@
 #define PS 12
 #define START 13
 #define SELECT 14
+////////////////////////
 #define UPRIGHT 20
 #define UPLEFT 21
 #define DOWNLEFT 22
 #define DOWNRIGHT 23
+#define CLOCKWISE 24
+#define ANTICLOCKWISE 25
+#define JOYUP 26
+#define JOYRIGHT 27
+#define JOYDOWN 28
+#define JOYLEFT 29
+
 /*#define L_UP 187
   //#define R_UP 19
   #define L_DOWN 188

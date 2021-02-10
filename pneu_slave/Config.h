@@ -16,8 +16,8 @@
 
 // Motor pinouts
 #define Grab_pwm 4
-#define Grab_in1 5
-#define Grab_in2 22
+#define Grab_in1 28
+#define Grab_in2 5
 
 #define m3d 13 
 #define m3p 6
@@ -57,6 +57,7 @@ int reedCount = 0;
 byte button = 0;
 bool PSDisconnected = 0;
 unsigned long currentMillis = 0;
+unsigned long [previousMillis = 0;
 
 // Custom functions ----------------------------------
 void pinModes()
@@ -98,8 +99,15 @@ void (*resetFunc)(void) = 0;
 #define PS 12
 #define START 13
 #define SELECT 14
+//////////////////////////
+#define DISC 255
 #define UPRIGHT 20
 #define UPLEFT 21
 #define DOWNLEFT 22
 #define DOWNRIGHT 23
-#define DISC 255
+#define CLOCKWISE 24
+#define ANTICLOCKWISE 25
+#define JOYUP 26
+#define JOYRIGHT 27
+#define JOYDOWN 28
+#define JOYLEFT 29

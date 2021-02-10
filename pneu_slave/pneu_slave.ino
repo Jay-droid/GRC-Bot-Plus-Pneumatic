@@ -1,7 +1,9 @@
+//TODO:
+//disconnect safetya
 
 #include "Config.h"
 #include <SPI.h>
-int pwm = 100;
+int pwm = 170;
 void setup()
 {
 
@@ -17,7 +19,6 @@ void setup()
 ISR(SPI_STC_vect)
 {
   button = SPDR;
-  Serial.println("button = "); Serial.println(button);
 }
 
 void loop()
@@ -27,27 +28,31 @@ void loop()
   }
   if (limitClk == LOW || limitAclk == LOW)
   {
-    Serial.println("Limit switch brake");
     stopGrabberMotor();
+    //    currentmillis = millis();
+    //    if(currentmillis > 1000) {
+    //      previousmillis = currentmillis;
+    //    }
+    //
   }
   switch (button)
   {
-    case UP:
+    case JOYUP:
       bot.forward(pwm, pwm, pwm, pwm);
       Serial.println("Forward");
       break;
 
-    case DOWN:
+    case JOYDOWN:
       bot.backward(pwm, pwm, pwm, pwm);
       Serial.println("Back");
       break;
 
-    case LEFT:
+    case JOYLEFT:
       bot.left(pwm, pwm, pwm, pwm);
       Serial.println("Left");
       break;
 
-    case RIGHT:
+    case JOYRIGHT:
       bot.right(pwm, pwm, pwm, pwm);
       Serial.println("Right");
       break;
@@ -72,12 +77,35 @@ void loop()
       Serial.println("DL");
       break;
 
-    case L1:
+    case CLOCKWISE:
+      bot.clk(pwm, pwm, pwm, pwm);
+      Serial.println("clk");
+      break;
+
+    case ANTICLOCKWISE:
+      bot.aclk(pwm, pwm, pwm, pwm);
+      Serial.println("aclk");
+      break;
+
+    case L2:
+      if (pwm < 250) {
+        pwm += 20;
+      }
+      break;
+
+    case R2:
+      if (pwm > 110) {
+        pwm -= 20;
+      }
+      Serial.println()
+      break;
+
+    case LEFT:
       GrabMotor.clk(100);
       Serial.println("gRABBER Clock");
       break;
 
-    case R1:
+    case RIGHT:
       GrabMotor.aclk(100);
       Serial.println("gRABBER anti");
       break;

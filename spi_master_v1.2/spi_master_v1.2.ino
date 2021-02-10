@@ -45,29 +45,59 @@ void vspiCommand()
     /***********************************************************************/
     if (Ps3.data.button.l1)
     {
-      spi_send(L1);
+      spi_send(CLOCKWISE);
       Print("L1-1");
     }
     else if (Ps3.data.button.r1)
     {
-      spi_send(R1);
+      spi_send(ANTICLOCKWISE);
       Print("R1-2");
     }
-    else if(Ps3.data.button.up && Ps3.data.button.right) {
-      spi_send(UPRIGHT);
+    else if (Ps3.event.button_down.r2)
+    {
+      spi_send(R2);
       Print("R1-2");
     }
-    else if(Ps3.data.button.up && Ps3.data.button.left) {
+    else if (Ps3.event.button_down.l2)
+    {
+      spi_send(L2);
+      Print("R1-2");
+    }
+    else if ( (Ps3.data.analog.stick.rx >= -128  && Ps3.data.analog.stick.rx < -1) &&
+              (Ps3.data.analog.stick.ry >= -128  && Ps3.data.analog.stick.ry < -1)) {
       spi_send(UPLEFT);
-      Print("R1-2");
     }
-    else if(Ps3.data.button.down && Ps3.data.button.right) {
-      spi_send(DOWNRIGHT);
-      Print("R1-2");
+    else if ( (Ps3.data.analog.stick.rx > -1  && Ps3.data.analog.stick.rx <= 127) &&
+              (Ps3.data.analog.stick.ry >= -128  && Ps3.data.analog.stick.ry < -1)) {
+      spi_send(UPRIGHT);
     }
-    else if(Ps3.data.button.down && Ps3.data.button.right) {
+    else if ( (Ps3.data.analog.stick.rx < -1  && Ps3.data.analog.stick.rx >= -128) &&
+              (Ps3.data.analog.stick.ry > -1  && Ps3.data.analog.stick.ry <= 127)) {
       spi_send(DOWNLEFT);
-      Print("R1-2");
+    }
+    else if ( (Ps3.data.analog.stick.rx > -1  && Ps3.data.analog.stick.rx <= 127) &&
+              (Ps3.data.analog.stick.ry <= 127  && Ps3.data.analog.stick.ry > -1)) {
+      spi_send(DOWNRIGHT);
+    }
+    else if ( (Ps3.data.analog.stick.lx >= -128  && Ps3.data.analog.stick.lx < 127) &&
+              (Ps3.data.analog.stick.ly == -128)) {
+      
+      spi_send(JOYUP);
+    }
+    else if ( (Ps3.data.analog.stick.lx > -128  && Ps3.data.analog.stick.lx <= 127) &&
+              (Ps3.data.analog.stick.ly == 127)) {
+      
+      spi_send(JOYDOWN);
+    }
+    else if ( (Ps3.data.analog.stick.lx == -128) &&
+              (Ps3.data.analog.stick.ly > -127 && Ps3.data.analog.stick.ly <= 127)) {
+      
+     spi_send(JOYLEFT);
+    }
+    else if ( (Ps3.data.analog.stick.lx == 127) &&
+              (Ps3.data.analog.stick.ly <= 127  && Ps3.data.analog.stick.ly > -128)) {
+      
+      spi_send(JOYRIGHT);
     }
     /***********************************************************************/
     else if (Ps3.data.button.up)
@@ -131,7 +161,6 @@ void vspiCommand()
     else if (Ps3.data.button.ps)
     {
       spi_send(DISC);
-      ESP.restart();
       Print("MEGA RESET");
     }
     else if (Ps3.data.button.select)
