@@ -142,16 +142,7 @@ void vspiCommand()
       Print("SQUARE-10");
     }
     /***********************************************************************/
-    else if (Ps3.data.button.l2)
-    {
-      spi_send(L2);
-      Print("L2-11");
-    }
-    else if (Ps3.data.button.r2)
-    {
-      spi_send(R2);
-      Print("R2-12");
-    }
+  
     /***********************************************************************/
     else if (Ps3.data.button.start)
     {
@@ -161,6 +152,7 @@ void vspiCommand()
     else if (Ps3.data.button.ps)
     {
       spi_send(DISC);
+      ESP.restart();
       Print("MEGA RESET");
     }
     else if (Ps3.data.button.select)

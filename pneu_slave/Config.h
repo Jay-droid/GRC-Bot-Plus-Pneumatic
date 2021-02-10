@@ -56,8 +56,9 @@ Bot bot(motor1, motor2, motor3, motor4);
 int reedCount = 0;
 byte button = 0;
 bool PSDisconnected = 0;
+
+unsigned long startMillis = 0;
 unsigned long currentMillis = 0;
-unsigned long [previousMillis = 0;
 
 // Custom functions ----------------------------------
 void pinModes()

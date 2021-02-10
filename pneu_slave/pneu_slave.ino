@@ -1,17 +1,14 @@
-//TODO:
-//disconnect safetya
-
 #include "Config.h"
 #include <SPI.h>
 int pwm = 170;
+
 void setup()
 {
-
   Serial.begin(115200);
   Serial.println("Mega restarted");
   pinMode(MISO, OUTPUT); // have to send on master in so it set as output
   SPCR |= _BV(SPE);
-  SPI.attachInterrupt(); // enable spi module'
+  SPI.attachInterrupt();
   pinModes();
   relaysOff();
 }
@@ -19,85 +16,86 @@ void setup()
 ISR(SPI_STC_vect)
 {
   button = SPDR;
+  startMillis = currentMillis;
 }
 
 void loop()
 {
-  if (button == DISC) {
+  currentMillis = millis();
+  if (abs(currentMillis - startMillis) > 1000) {
+    Serial.println("resetting through millis");
     resetFunc();
   }
   if (limitClk == LOW || limitAclk == LOW)
   {
     stopGrabberMotor();
-    //    currentmillis = millis();
-    //    if(currentmillis > 1000) {
-    //      previousmillis = currentmillis;
-    //    }
-    //
   }
   switch (button)
   {
     case JOYUP:
-      bot.forward(pwm, pwm, pwm, pwm);
+      bot.forward(pwm, pwm, pwm + 50, pwm + 50);
       Serial.println("Forward");
       break;
 
     case JOYDOWN:
-      bot.backward(pwm, pwm, pwm, pwm);
+      bot.backward(pwm, pwm, pwm + 50, pwm + 50);
       Serial.println("Back");
       break;
 
     case JOYLEFT:
-      bot.left(pwm, pwm, pwm, pwm);
+      bot.left(pwm, pwm, pwm + 50, pwm + 50);
       Serial.println("Left");
       break;
 
     case JOYRIGHT:
-      bot.right(pwm, pwm, pwm, pwm);
+      bot.right(pwm, pwm, pwm + 50, pwm + 50);
       Serial.println("Right");
       break;
 
     case UPRIGHT:
-      bot.upRight(pwm, pwm, pwm, pwm);
+      bot.upRight(pwm, pwm, pwm + 50, pwm + 50);
       Serial.println("UR");
       break;
 
     case UPLEFT:
-      bot.upLeft(pwm, pwm, pwm, pwm);
+      bot.upLeft(pwm, pwm, pwm + 50, pwm + 50);
       Serial.println("UL");
       break;
 
     case DOWNRIGHT:
-      bot.downRight(pwm, pwm, pwm, pwm);
+      bot.downRight(pwm, pwm, pwm + 50, pwm + 50);
       Serial.println("DR");
       break;
 
     case DOWNLEFT:
-      bot.downLeft(pwm, pwm, pwm, pwm);
+      bot.downLeft(pwm, pwm, pwm + 50, pwm + 50);
       Serial.println("DL");
       break;
 
     case CLOCKWISE:
-      bot.clk(pwm, pwm, pwm, pwm);
+      bot.clk(pwm, pwm, pwm + 50, pwm + 50);
       Serial.println("clk");
       break;
 
     case ANTICLOCKWISE:
-      bot.aclk(pwm, pwm, pwm, pwm);
+      bot.aclk(pwm, pwm, pwm + 50, pwm + 50);
       Serial.println("aclk");
       break;
 
     case L2:
-      if (pwm < 250) {
-        pwm += 20;
-      }
-      break;
-
-    case R2:
       if (pwm > 110) {
         pwm -= 20;
       }
-      Serial.println()
+      Serial.print("Decrease by 20 - ");
+      Serial.println(pwm);
+      break;
+
+    case R2:
+      if (pwm < 250) {
+        pwm += 20;
+      }
+      Serial.print("INcrease by 20 - ");
+      Serial.println(pwm);
       break;
 
     case LEFT:
