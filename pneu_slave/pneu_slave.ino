@@ -1,6 +1,5 @@
-#include "Config.h"
+#include "mpu.h"
 #include <SPI.h>
-int pwm = 50;
 
 void setup()
 {
@@ -11,22 +10,25 @@ void setup()
   SPI.attachInterrupt();
   pinModes();
   relaysOff();
+  mpuSetup();
 }
 
 ISR(SPI_STC_vect)
 {
   button = SPDR;
   startMillis = currentMillis;
-  Serial.print("button - "); Serial.println(button);
 }
 
 void loop()
 {
-  currentMillis = millis();
-  if (abs(currentMillis - startMillis) > 1000) {
-    Serial.println("resetting through millis");
-    resetFunc();
-  }
+
+  //  if (initial == 1) {
+  //    currentMillis = millis();
+  //    if (abs(currentMillis - startMillis) > 2000) {
+  //      resetFunc();
+  //    }
+  //  }
+  //  initial = 1;
   if (limitClk == LOW || limitAclk == LOW)
   {
     stopGrabberMotor();
@@ -34,70 +36,70 @@ void loop()
   switch (button)
   {
     case JOYUP:
-      bot.forward(pwm,pwm,pwm,pwm);
+      forward();
       Serial.println("Forward");
       break;
 
     case JOYDOWN:
-      bot.backward(pwm,pwm,pwm,pwm);
+      backward();
       Serial.println("Back");
       break;
 
     case JOYLEFT:
-      bot.left(pwm,pwm,pwm,pwm);
+      bot.left(80, 80, 80, 80);
       Serial.println("Left");
       break;
 
     case JOYRIGHT:
-      bot.right(pwm,pwm,pwm,pwm);
+      bot.right(80, 80, 80, 80);
       Serial.println("Right");
       break;
 
     case UPRIGHT:
-      bot.upRight(pwm,pwm,pwm,pwm);
+      bot.upRight(80, 80, 50, 50);
       Serial.println("UR");
       break;
 
     case UPLEFT:
-      bot.upLeft(pwm,pwm,pwm,pwm);
+      bot.upLeft(50, 50, 50, 50);
       Serial.println("UL");
       break;
 
     case DOWNRIGHT:
-      bot.downRight(pwm,pwm,pwm,pwm);
+      bot.downRight(50, 50, 50, 50);
       Serial.println("DR");
       break;
 
     case DOWNLEFT:
-      bot.downLeft(pwm,pwm,pwm,pwm);
+      bot.downLeft(50, 50, 50, 50);
       Serial.println("DL");
       break;
 
     case CLOCKWISE:
-      bot.clk(pwm,pwm,pwm,pwm);
+      bot.clk(80, 80, 80, 80);
       Serial.println("clk");
       break;
 
     case ANTICLOCKWISE:
-      bot.aclk(pwm,pwm,pwm,pwm);
+      bot.aclk(80, 80, 80, 80);
       Serial.println("aclk");
       break;
-//
-//    case L2:
-//      if (pwm > 110) {
-//        pwm -= 20;
-//      }
-//      Serial.print("Decrease by 20 - ");
-//      Serial.println(pwm);
-//      break;
-//
-//    case R2:
-//      if (pwm < 250) {
-//        pwm += 20;
-//      }
-//      Serial.print("INcrease by 20 - ");
-//      Serial.println(pwm);
-//      break;
+    //
+    //    case L2:
+    //      if (pwm > 110) {
+    //        pwm -= 20;
+    //      }
+    //      Serial.print("Decrease by 20 - ");
+    //      Serial.println(pwm);
+    //      break;
+    //
+    //    case R2:
+    //      if (pwm < 250) {
+    //        pwm += 20;
+    //      }
+    //      Serial.print("INcrease by 20 - ");
+    //      Serial.println(pwm);
+    //      break;
 
     case LEFT:
       GrabMotor.clk(100);
@@ -121,7 +123,7 @@ void loop()
 
     case CROSS:
       Thrower.Close();
-      delay(10);
+      delay(5);
       Thrower.Free();
       Serial.println("Thrower Down");
       break;
@@ -145,22 +147,23 @@ void loop()
       break;
 
     case START:
-      iniPos();
+      Grabber.Close();
+      grabberAclk(100);
+      delay(500);
+      bot.forward(50, 50, 50, 50);
+      delay(800);
+      bot.brake();
       break;
 
     case SELECT:
-      Grabber.Close();
-      grabberAclk(25);
-      GrabMotor.brake();
-      //move bot forward
-      delay(3000);
+      GrabEnc.write(0);
       grabberAclk(2400);
-      delay(3000);
+      delay(500);
       Thrower.Close();
-      delay(3000);
+      delay(500);
       grabberAclk(2800);
       Grabber.Open();
-      delay(1000);
+      delay(500);
       grabberAclk(3500);
       GrabMotor.brake();
       break;

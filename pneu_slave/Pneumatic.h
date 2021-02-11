@@ -24,4 +24,9 @@ class Pneumatic {
       digitalWrite(pin1, HIGH);
       digitalWrite(pin2, HIGH);
     }
+
+    void Hold() {
+      digitalWrite(pin1, LOW);
+      digitalWrite(pin2, LOW);
+    }
 };

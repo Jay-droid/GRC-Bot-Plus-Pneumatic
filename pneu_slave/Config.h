@@ -2,10 +2,13 @@
 #include "Bot.h"
 #include "Pneumatic.h"
 #include <Encoder.h>
+#include <MPU6050_tockn.h>
+#include<Wire.h>
+MPU6050 mpu6050(Wire);
 
 // Definition of pins ---------------------------------
-// Relay in order from vcc - 43, 45, 41, A12 
-#define ThrowP1 A12  
+// Relay in order from vcc - 43, 45, 41, A12
+#define ThrowP1 A12
 #define ThrowP2 41
 #define GrabP1 45
 #define GrabP2 43
@@ -19,17 +22,17 @@
 #define Grab_in1 28
 #define Grab_in2 5
 
-#define m3d 13 
-#define m3p 6
+#define m1d 11
+#define m1p 8
 
 #define m2d 7
 #define m2p 12
 
+#define m3d 13
+#define m3p 6
+
 #define m4d 9
 #define m4p 10
-
-#define m1d 11
-#define m1p 8
 
 // Definition of digitalReads -------------------------
 #define limitClk digitalRead(limitClkPin)
@@ -37,14 +40,24 @@
 #define reedSwitch digitalRead(reedPin)
 #define readEncoder GrabEnc.read()
 
+
+// Variables- -----------------------------------------
+int reedCount = 0;
+byte button = 0;
+bool PSDisconnected = 0;
+unsigned long startMillis = 0;
+unsigned long currentMillis = 0;
+float angleZ = 0;
+int pwm = 120;
+bool initial = 0;
+
 // Creating objects of classes-------------------------
 Motor GrabMotor(Grab_pwm, Grab_in1, Grab_in2);
-Encoder GrabEnc(2,3);
+Encoder GrabEnc(2, 3);
 Pneumatic Thrower(ThrowP1, ThrowP2);
 Pneumatic Grabber(GrabP1, GrabP2);
 
-
-// Base motors and Bot object
+// Base motors and Bot object ----------------------
 Motor motor1(m1p, m1d);
 Motor motor2(m2p, m2d);
 Motor motor3(m3p, m3d);
@@ -52,13 +65,7 @@ Motor motor4(m4p, m4d);
 
 Bot bot(motor1, motor2, motor3, motor4);
 
-// Variables- -----------------------------------------
-int reedCount = 0;
-byte button = 0;
-bool PSDisconnected = 0;
 
-unsigned long startMillis = 0;
-unsigned long currentMillis = 0;
 
 // Custom functions ----------------------------------
 void pinModes()
@@ -78,6 +85,12 @@ void relaysOff()
   digitalWrite(GrabP2, HIGH);
   digitalWrite(ThrowP1, HIGH);
   digitalWrite(ThrowP2, HIGH);
+}
+
+void mpuSetup() {
+  Wire.begin();
+  mpu6050.begin();
+  mpu6050.calcGyroOffsets(true);
 }
 
 void (*resetFunc)(void) = 0;
