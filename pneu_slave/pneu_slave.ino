@@ -1,6 +1,6 @@
 #include "Config.h"
 #include <SPI.h>
-int pwm = 170;
+int pwm = 50;
 
 void setup()
 {
@@ -17,6 +17,7 @@ ISR(SPI_STC_vect)
 {
   button = SPDR;
   startMillis = currentMillis;
+  Serial.print("button - "); Serial.println(button);
 }
 
 void loop()
@@ -33,70 +34,70 @@ void loop()
   switch (button)
   {
     case JOYUP:
-      bot.forward(pwm, pwm, pwm + 50, pwm + 50);
+      bot.forward(pwm,pwm,pwm,pwm);
       Serial.println("Forward");
       break;
 
     case JOYDOWN:
-      bot.backward(pwm, pwm, pwm + 50, pwm + 50);
+      bot.backward(pwm,pwm,pwm,pwm);
       Serial.println("Back");
       break;
 
     case JOYLEFT:
-      bot.left(pwm, pwm, pwm + 50, pwm + 50);
+      bot.left(pwm,pwm,pwm,pwm);
       Serial.println("Left");
       break;
 
     case JOYRIGHT:
-      bot.right(pwm, pwm, pwm + 50, pwm + 50);
+      bot.right(pwm,pwm,pwm,pwm);
       Serial.println("Right");
       break;
 
     case UPRIGHT:
-      bot.upRight(pwm, pwm, pwm + 50, pwm + 50);
+      bot.upRight(pwm,pwm,pwm,pwm);
       Serial.println("UR");
       break;
 
     case UPLEFT:
-      bot.upLeft(pwm, pwm, pwm + 50, pwm + 50);
+      bot.upLeft(pwm,pwm,pwm,pwm);
       Serial.println("UL");
       break;
 
     case DOWNRIGHT:
-      bot.downRight(pwm, pwm, pwm + 50, pwm + 50);
+      bot.downRight(pwm,pwm,pwm,pwm);
       Serial.println("DR");
       break;
 
     case DOWNLEFT:
-      bot.downLeft(pwm, pwm, pwm + 50, pwm + 50);
+      bot.downLeft(pwm,pwm,pwm,pwm);
       Serial.println("DL");
       break;
 
     case CLOCKWISE:
-      bot.clk(pwm, pwm, pwm + 50, pwm + 50);
+      bot.clk(pwm,pwm,pwm,pwm);
       Serial.println("clk");
       break;
 
     case ANTICLOCKWISE:
-      bot.aclk(pwm, pwm, pwm + 50, pwm + 50);
+      bot.aclk(pwm,pwm,pwm,pwm);
       Serial.println("aclk");
       break;
-
-    case L2:
-      if (pwm > 110) {
-        pwm -= 20;
-      }
-      Serial.print("Decrease by 20 - ");
-      Serial.println(pwm);
-      break;
-
-    case R2:
-      if (pwm < 250) {
-        pwm += 20;
-      }
-      Serial.print("INcrease by 20 - ");
-      Serial.println(pwm);
-      break;
+//
+//    case L2:
+//      if (pwm > 110) {
+//        pwm -= 20;
+//      }
+//      Serial.print("Decrease by 20 - ");
+//      Serial.println(pwm);
+//      break;
+//
+//    case R2:
+//      if (pwm < 250) {
+//        pwm += 20;
+//      }
+//      Serial.print("INcrease by 20 - ");
+//      Serial.println(pwm);
+//      break;
 
     case LEFT:
       GrabMotor.clk(100);
