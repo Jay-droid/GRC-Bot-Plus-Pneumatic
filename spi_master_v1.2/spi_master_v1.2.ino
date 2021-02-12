@@ -10,7 +10,6 @@ void setup()
   Serial.println("Ready.");
   pinMode(5, OUTPUT); //VSPI SS
   pinMode(2, OUTPUT);
-  digitalWrite(2, 1);
 }
 void spi_send(int x)
 {
@@ -19,7 +18,6 @@ void spi_send(int x)
   SPI.transfer(x);
   digitalWrite(5, HIGH); //pull ss high to signify end of Data transfer
   SPI.endTransaction();
-  digitalWrite(2, 1);
 }
 void vspiCommand()
 {
@@ -29,9 +27,11 @@ void vspiCommand()
     digitalWrite(2, 0);
     set_arr(0);
     spi_send(DISC);
+    Print("DISC");
   }
   /***********************PS3 CONNECTED************************************************/
   if (Ps3.isConnected()) {
+    digitalWrite(2, 1);
     /*************************JOYSTICK ARRAYED DATA**********************************************/
     joy_map();
     for (byte i = 0; i < sizeof joy; i++) {
@@ -151,8 +151,7 @@ void vspiCommand()
     }
     else if (Ps3.data.button.ps)
     {
-      spi_send(DISC);
-      ESP.restart();
+      spi_send(PS);
       Print("MEGA RESET");
     }
     else if (Ps3.data.button.select)

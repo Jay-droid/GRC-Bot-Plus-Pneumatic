@@ -1,78 +1,81 @@
 #include "mpu.h"
 #include <SPI.h>
 
+//1. test ps reset
+//3. add disconnect safety
+//4. replace delay with millis
 void setup()
 {
   Serial.begin(115200);
   Serial.println("Mega restarted");
-  pinMode(MISO, OUTPUT); // have to send on master in so it set as output
   SPCR |= _BV(SPE);
   SPI.attachInterrupt();
   pinModes();
   relaysOff();
   mpuSetup();
+  Serial.println("setup khatam");
 }
 
 ISR(SPI_STC_vect)
 {
-  button = SPDR;
+  if(SPDR != 135) {
+    button = SPDR;
+  }
+  
+  Serial.print("Button - "); Serial.println(button);
   startMillis = currentMillis;
 }
 
 void loop()
 {
 
-  //  if (initial == 1) {
-  //    currentMillis = millis();
-  //    if (abs(currentMillis - startMillis) > 2000) {
-  //      resetFunc();
-  //    }
-  //  }
-  //  initial = 1;
-  if (limitClk == LOW || limitAclk == LOW)
-  {
-    stopGrabberMotor();
+//  Serial.println(currentMillis - startMillis);
+  currentMillis = millis();
+  if (abs(currentMillis - startMillis) > 1000) {
+    resetFunc();
   }
+
+  stopGrabberMotor();
   switch (button)
   {
-    case JOYUP:
+    case UP:
       forward();
-      Serial.println("Forward");
+//      Serial.println("Forward");
       break;
 
-    case JOYDOWN:
+    case DOWN:
       backward();
-      Serial.println("Back");
+//      Serial.println("Back");
       break;
 
-    case JOYLEFT:
-      bot.left(80, 80, 80, 80);
-      Serial.println("Left");
+    case LEFT:
+      left();
+//      Serial.println("Left");
       break;
 
-    case JOYRIGHT:
-      bot.right(80, 80, 80, 80);
-      Serial.println("Right");
+    case RIGHT:
+      right();
+//      Serial.println("Right");
       break;
 
     case UPRIGHT:
-      bot.upRight(80, 80, 50, 50);
-      Serial.println("UR");
+      bot.upRight(80);
+//      Serial.println("UR");
       break;
 
     case UPLEFT:
-      bot.upLeft(50, 50, 50, 50);
-      Serial.println("UL");
+      bot.upLeft(80);
+//      Serial.println("UL");
       break;
 
     case DOWNRIGHT:
-      bot.downRight(50, 50, 50, 50);
-      Serial.println("DR");
+      bot.downRight(80);
+//      Serial.println("DR");
       break;
 
     case DOWNLEFT:
-      bot.downLeft(50, 50, 50, 50);
-      Serial.println("DL");
+      bot.downLeft(80);
+//      Serial.println("DL");
       break;
 
     case CLOCKWISE:
@@ -85,28 +88,28 @@ void loop()
       Serial.println("aclk");
       break;
     //
-    //    case L2:
-    //      if (pwm > 110) {
-    //        pwm -= 20;
-    //      }
-    //      Serial.print("Decrease by 20 - ");
-    //      Serial.println(pwm);
-    //      break;
-    //
-    //    case R2:
-    //      if (pwm < 250) {
-    //        pwm += 20;
-    //      }
-    //      Serial.print("INcrease by 20 - ");
-    //      Serial.println(pwm);
-    //      break;
+    case L2:
+      if (pwm > 110) {
+        pwm -= 20;
+      }
+      Serial.println("Decrease by 20 - ");
+      Serial.println(pwm);
+      break;
 
-    case LEFT:
+    case R2:
+      if (pwm < 250) {
+        pwm += 20;
+      }
+      Serial.println("INcrease by 20 - ");
+      Serial.println(pwm);
+      break;
+
+    case JOYRIGHT:
       GrabMotor.clk(100);
       Serial.println("gRABBER Clock");
       break;
 
-    case RIGHT:
+    case JOYLEFT:
       GrabMotor.aclk(100);
       Serial.println("gRABBER anti");
       break;
@@ -130,7 +133,7 @@ void loop()
 
     case TRIANGLE:
       Serial.println("Thrower Up");
-      while (reedCount < 2)
+      while (button == TRIANGLE && reedCount < 2)
       {
         if (reedSwitch == 0)
         {
@@ -140,9 +143,10 @@ void loop()
         {
           Thrower.Free();
         }
+        Serial.println("Thrower loop");
       }
+      Serial.println("Exited thrower loop");
       Thrower.Open();
-      delay(1000);
       reedCount = 0;
       break;
 
@@ -151,7 +155,7 @@ void loop()
       grabberAclk(100);
       delay(500);
       bot.forward(50, 50, 50, 50);
-      delay(800);
+      delay(700);
       bot.brake();
       break;
 
@@ -166,6 +170,11 @@ void loop()
       delay(500);
       grabberAclk(3500);
       GrabMotor.brake();
+      break;
+
+    case PS:
+      Serial.println("Reset");
+      resetFunc();
       break;
 
     default:
@@ -207,19 +216,23 @@ void grabberClk(int pulses)
   GrabMotor.brake();
 }
 
+
+
 void stopGrabberMotor()
 {
-  GrabMotor.brake();
-  GrabEnc.write(0);
-  if (limitClk == LOW && limitAclk == HIGH)
+  if (limitClk == LOW || limitAclk == LOW)
   {
-    grabberAclk(30);
+    GrabMotor.brake();
     GrabEnc.write(0);
+    if (limitClk == LOW && limitAclk == HIGH)
+    {
+      grabberAclk(30);
+      GrabEnc.write(0);
+    }
+    else if (limitAclk == LOW && limitClk == HIGH)
+    {
+      grabberClk(30);
+      GrabEnc.write(0);
+    }
   }
-  else if (limitAclk == LOW && limitClk == HIGH)
-  {
-    grabberClk(30);
-    GrabEnc.write(0);
-  }
-  Serial.println("Limit Switch Brake");
 }

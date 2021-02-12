@@ -44,12 +44,13 @@ MPU6050 mpu6050(Wire);
 // Variables- -----------------------------------------
 int reedCount = 0;
 byte button = 0;
-bool PSDisconnected = 0;
+float angleZ = 0;
+
+// List of millis -------------------------
+
 unsigned long startMillis = 0;
 unsigned long currentMillis = 0;
-float angleZ = 0;
-int pwm = 120;
-bool initial = 0;
+
 
 // Creating objects of classes-------------------------
 Motor GrabMotor(Grab_pwm, Grab_in1, Grab_in2);
@@ -74,9 +75,10 @@ void pinModes()
   pinMode(GrabP2, OUTPUT);
   pinMode(ThrowP1, OUTPUT);
   pinMode(ThrowP2, OUTPUT);
-  pinMode(reedPin, INPUT_PULLUP); //Reed Switch
-  pinMode(limitClkPin, INPUT_PULLUP); //LimitClock
-  pinMode(limitAclkPin, INPUT_PULLUP); //LimitAntiClock
+  pinMode(reedPin, INPUT_PULLUP);
+  pinMode(limitClkPin, INPUT_PULLUP); 
+  pinMode(limitAclkPin, INPUT_PULLUP); 
+  pinMode(MISO, OUTPUT);
 }
 
 void relaysOff()
