@@ -18,64 +18,63 @@ void setup()
 
 ISR(SPI_STC_vect)
 {
-  if(SPDR != 135) {
+  if (SPDR != 135) {
     button = SPDR;
   }
-  
-  Serial.print("Button - "); Serial.println(button);
-  startMillis = currentMillis;
+//  Serial.print("Button - "); Serial.println(button);
+  resetMillis = currentMillis;
 }
 
 void loop()
 {
-
-//  Serial.println(currentMillis - startMillis);
+  //  Serial.println(currentMillis - startMillis);
   currentMillis = millis();
-  if (abs(currentMillis - startMillis) > 1000) {
+  if (abs(currentMillis - resetMillis) > 1000) {
     resetFunc();
   }
+
 
   stopGrabberMotor();
   switch (button)
   {
     case UP:
       forward();
-//      Serial.println("Forward");
+      //      Serial.println("Forward");
       break;
 
     case DOWN:
       backward();
-//      Serial.println("Back");
+      //      Serial.println("Back");
       break;
 
     case LEFT:
       left();
-//      Serial.println("Left");
+      //      Serial.println("Left");
       break;
 
     case RIGHT:
       right();
-//      Serial.println("Right");
+      //      Serial.println("Right");
       break;
 
     case UPRIGHT:
       bot.upRight(80);
-//      Serial.println("UR");
+      //      Serial.println("UR");
       break;
 
     case UPLEFT:
       bot.upLeft(80);
-//      Serial.println("UL");
+      //      Serial.println("UL");
       break;
 
     case DOWNRIGHT:
       bot.downRight(80);
-//      Serial.println("DR");
+      //      Serial.println("DR");
       break;
 
     case DOWNLEFT:
       bot.downLeft(80);
-//      Serial.println("DL");
+      //      Serial.println("DL");
       break;
 
     case CLOCKWISE:
@@ -106,12 +105,14 @@ void loop()
 
     case JOYRIGHT:
       GrabMotor.clk(100);
-      Serial.println("gRABBER Clock");
+      Serial.print("Encoder - ");
+      Serial.println(readEncoder);
       break;
 
     case JOYLEFT:
       GrabMotor.aclk(100);
-      Serial.println("gRABBER anti");
+      Serial.print("Encoder - ");
+      Serial.println(readEncoder);
       break;
 
     case SQUARE:
@@ -126,50 +127,75 @@ void loop()
 
     case CROSS:
       Thrower.Close();
-      delay(5);
-      Thrower.Free();
       Serial.println("Thrower Down");
       break;
 
     case TRIANGLE:
       Serial.println("Thrower Up");
-      while (button == TRIANGLE && reedCount < 2)
+      while (reedCount < 2)
       {
         if (reedSwitch == 0)
         {
+          //           Serial.println("reed plus");
           reedCount++;
         }
         else
         {
+          //           Serial.println("free throw");
           Thrower.Free();
         }
-        Serial.println("Thrower loop");
       }
-      Serial.println("Exited thrower loop");
+      Serial.println("shoot");
       Thrower.Open();
+      delay(100);
       reedCount = 0;
       break;
 
+    case R3:
+      mpu6050.update();
+      while (mpu6050.getAngleZ() > -20) {
+        mpu6050.update();
+        Serial.println(mpu6050.getAngleZ());
+        bot.aclk(50, 50, 50, 50);
+      }
+      bot.brake();
+      bot.clk(50, 50, 50, 50);
+      delay(50);
+      bot.brake();
+      break;
+
+
     case START:
+
       Grabber.Close();
       grabberAclk(100);
-      delay(500);
       bot.forward(50, 50, 50, 50);
       delay(700);
       bot.brake();
+      
       break;
 
     case SELECT:
       GrabEnc.write(0);
       grabberAclk(2400);
-      delay(500);
+      delay(1000);
       Thrower.Close();
-      delay(500);
+      delay(1000);
       grabberAclk(2800);
       Grabber.Open();
-      delay(500);
+      delay(1000);
       grabberAclk(3500);
       GrabMotor.brake();
+      mpu6050.update();
+      while (mpu6050.getAngleZ() > -20) {
+        mpu6050.update();
+        Serial.println(mpu6050.getAngleZ());
+        bot.aclk(50, 50, 50, 50);
+      }
+      bot.brake();
+      bot.clk(50, 50, 50, 50);
+      delay(70);
+      bot.brake();
       break;
 
     case PS:

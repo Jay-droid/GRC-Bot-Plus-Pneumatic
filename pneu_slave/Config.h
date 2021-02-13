@@ -49,6 +49,8 @@ float angleZ = 0;
 // List of millis -------------------------
 
 unsigned long startMillis = 0;
+unsigned long selectMillis = 0;
+unsigned long resetMillis = 0;
 unsigned long currentMillis = 0;
 
 
