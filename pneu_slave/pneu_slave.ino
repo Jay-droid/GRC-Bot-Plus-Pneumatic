@@ -21,7 +21,7 @@ ISR(SPI_STC_vect)
   if (SPDR != 135) {
     button = SPDR;
   }
-//  Serial.print("Button - "); Serial.println(button);
+  //  Serial.print("Button - "); Serial.println(button);
   resetMillis = currentMillis;
 }
 
@@ -127,6 +127,10 @@ void loop()
 
     case CROSS:
       Thrower.Close();
+      delay(5);
+      Thrower.Hold();
+      delay(5);
+      Thrower.Free();
       Serial.println("Thrower Down");
       break;
 
@@ -153,7 +157,7 @@ void loop()
 
     case R3:
       mpu6050.update();
-      while (mpu6050.getAngleZ() > -20) {
+      while (mpu6050.getAngleZ() > -35) {
         mpu6050.update();
         Serial.println(mpu6050.getAngleZ());
         bot.aclk(50, 50, 50, 50);
@@ -172,18 +176,18 @@ void loop()
       bot.forward(50, 50, 50, 50);
       delay(700);
       bot.brake();
-      
+
       break;
 
     case SELECT:
       GrabEnc.write(0);
       grabberAclk(2400);
-      delay(1000);
+      delay(500);
       Thrower.Close();
-      delay(1000);
+      delay(500);
       grabberAclk(2800);
       Grabber.Open();
-      delay(1000);
+      delay(500);
       grabberAclk(3500);
       GrabMotor.brake();
       mpu6050.update();
@@ -196,6 +200,24 @@ void loop()
       bot.clk(50, 50, 50, 50);
       delay(70);
       bot.brake();
+      Thrower.Close();
+      while (reedCount < 2)
+      {
+        if (reedSwitch == 0)
+        {
+          //           Serial.println("reed plus");
+          reedCount++;
+        }
+        else
+        {
+          //           Serial.println("free throw");
+          Thrower.Free();
+        }
+      }
+      Serial.println("shoot");
+      Thrower.Open();
+      delay(100);
+      reedCount = 0;
       break;
 
     case PS:
